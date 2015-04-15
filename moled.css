@@ -7,14 +7,27 @@ line {
   stroke-width: 1px;
 }
 
+line:hover {
+  stroke-width: 4px;
+}
+
+.drag_line:hover {
+  stroke-width: 1px;
+}
+
 circle {
   stroke: black;
   fill: white;
 }
 
+.selected {
+  stroke: red;
+}
+
+
 svg text {
   font-family: Verdana;
-  font-size: 11px;
+  font-size: 14px;
 
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -22,5 +35,8 @@ svg text {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
 
+.node {
+  cursor: default;
 }
