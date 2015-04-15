@@ -24,6 +24,10 @@ circle {
   stroke: red;
 }
 
+.selected line {
+  stroke: red;
+}
+
 
 svg text {
   font-family: Verdana;

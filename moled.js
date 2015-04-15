@@ -3,10 +3,12 @@
         height = 500;
 
     var currAtom = 'C',
-        selectedNode = null;
+        bondType = "quadruple";
+
+    var linkIndex = 0;
 
     var nodes = [{id: 'C'}, {id: 'H'}],
-        links = [{source: 0, target: 1}];
+        links = [{source: 0, target: 1, type: bondType, index2: linkIndex++}];
 
     var force = d3.layout.force()
         .size([width, height])
@@ -41,7 +43,8 @@
     function tick() {
        
         // links
-        linksSelection.attr("x1", function(d) { return d.source.x; })
+        linksSelection.selectAll("line")
+            .attr("x1", function(d) { return d.source.x; })
             .attr("y1", function(d) { return d.source.y; })
             .attr("x2", function(d) { return d.target.x; })
             .attr("y2", function(d) { return d.target.y; });
@@ -56,13 +59,32 @@
     
     function draw() {
 
-        linksSelection = linksSelection.data(links);
-        linksSelection.enter()
-            .insert("line", ".node") // insert so that nodes stay on top
+        linksSelection = linksSelection.data(links, function(d) {return d.index;});
+        var linksEnter = linksSelection.enter()
+            .insert("g", ".node") // insert so that nodes stay on top                        
             .attr("class", "link");
+        
+        linksEnter.each(function (d) {
+            if (d.type === "single") {
+                linksEnter.append("line");
+            } else if (d.type === "double") {
+                linksEnter.append("line").style("stroke-width", 5);
+                linksEnter.append("line").style("stroke-width", 3).style("stroke", "white");      
+            } else if (d.type === "triple") {                
+                linksEnter.append("line").style("stroke-width", 10);
+                linksEnter.append("line").style("stroke-width", 8).style("stroke", "white");                      
+                linksEnter.append("line").style("stroke-width", 1);      
+            } else if (d.type === "quadruple") {
+                linksEnter.append("line").style("stroke-width", 15);
+                linksEnter.append("line").style("stroke-width", 13).style("stroke", "white");
+                linksEnter.append("line").style("stroke-width", 6);
+                linksEnter.append("line").style("stroke-width", 4).style("stroke", "white");
+            }             
+        });
+        
 
-        linksSelection.exit()
-            .remove();
+        var linksExit = linksSelection.exit();
+        linksExit.remove();
 
         nodesSelection = nodesSelection.data(nodes, function(d) {return d.index;});
         var nodesEnter = nodesSelection.enter()
@@ -113,18 +135,18 @@
 
     function mouseup(d) {
         var event = d3.event;
-        var eventTarget = d3.select(event.target);
+        var eventTarget = d3.select(event.target);        
         if (drag_line) {                     
             // if the cursor is inside the node
-            if (event.target.nodeName == "circle") {                
-                // select g container, which has .node class
-                
+            if (event.target.nodeName == "circle") {          
+
                 // this block handles connecting bonds to existing nodes
 
                 // if the cursor is in a circle, but not the same circle
                 if (drag_line.mousedown_node.datum() !== eventTarget.datum()) {
                     // add new link
-                    var dragLink = {source: drag_line.mousedown_node.datum(), target: eventTarget.datum()};
+                    var dragLink = {source: drag_line.mousedown_node.datum(), target: eventTarget.datum(),
+                                    type: bondType, index: linkIndex++};
                     links.push(dragLink);   
 
                     // execute enter()
@@ -135,7 +157,7 @@
                     if (selectedLink) {
                         selectedLink.classed("selected", false);
                     }
-
+                    
                     // this block handles selections
                     if (!selectedNode) { // first selection
                         // select new node
@@ -166,7 +188,8 @@
                 var mouse = d3.mouse(this);
                 var dragNode = {x: mouse[0], y: mouse[1], id: currAtom};
                 nodes.push(dragNode);
-                var dragLink = {source: drag_line.mousedown_node.datum(), target: dragNode};
+                var dragLink = {source: drag_line.mousedown_node.datum(), target: dragNode,
+                                type: bondType, index: linkIndex++};
                 links.push(dragLink);
 
                 // remove drag_line
@@ -179,7 +202,7 @@
             }   
         } else if (event.target.nodeName == "line") { // drag_line won't exist when selecting bonds
             // this block handles selections
-
+            eventTarget = d3.select(event.target.parentNode);
             // remove selection from node                
             if (selectedNode) {
                 selectedNode.classed("selected", false);
@@ -221,9 +244,7 @@
                     }
                     
                     //remove selectedNode                        
-                    var index = nodes.indexOf(selectedNode.datum());
                     nodes.splice(nodes.indexOf(selectedNode.datum()), 1);
-                    //selectedNode.remove(); // exit doesn't handle this correctly
 
                     //remove selection
                     selectedNode.classed("selected", false);
