@@ -271,7 +271,7 @@
         force.nodes(nodes);
         force.links(links);
         force.start();
-        something();
+        initHydrogensAndCharge();
         draw();  
     }     
     importSmiles();
@@ -288,6 +288,7 @@
                atom == "Cl"||
                atom == "Br"||
                atom == "I";
+        return Boolean(valenceLookup(atom, 0));
     }
 
     function valenceLookup(atom, weight) {
@@ -357,13 +358,19 @@
         return weight;
     }
 
-    function something() {
+    function initHydrogensAndCharge() {
         for (var i = 0; i < nodes.length; i++) {
             if (isOrganic(nodes[i].id)) {
-                if (nodes[i].hydrogens !== null) {
-                    
-                } else if (nodes[i].charge !== null) {
+                if (nodes[i].hydrogens !== null && nodes[i].charge !== null) {
 
+                } else if (nodes[i].hydrogens !== null) {
+                    var weight = calcWeight(nodes[i]) + nodes[i].hydrogens;
+                    var valence = valenceLookup(nodes[i].id, weight);
+                    nodes[i].charge = weight - valence;
+                } else if (nodes[i].charge !== null) {
+                    var weight = calcWeight(nodes[i]);   
+                    var valence = valenceLookup(nodes[i].id, weight);
+                    nodes[i].hydrogens = valence - weight + nodes[i].charge;
                 } else {
                     var weight = calcWeight(nodes[i]);
                     var valence = valenceLookup(nodes[i].id, weight);
