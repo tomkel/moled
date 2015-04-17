@@ -3,19 +3,17 @@
         height = 500;
 
     var currAtom = 'C',
-        bondType = "quadruple";
-
-    var linkIndex = 0;
+        bondType = "single";   
 
     var nodes = [{id: 'C'}, {id: 'H'}],
-        links = [{source: 0, target: 1, type: bondType, index2: linkIndex++}];
+        links = [{source: 0, target: 1, type: bondType, index: linkIndex++}];
 
     var force = d3.layout.force()
         .size([width, height])
         .nodes(nodes)
         .links(links)
-        .linkDistance(50)
-        .charge(-200)
+        .linkDistance(30)
+        .charge(-500)
         //.friction(0.1)
         .on('tick', tick)
         .start();
@@ -65,20 +63,21 @@
             .attr("class", "link");
         
         linksEnter.each(function (d) {
+            var thisSelection = d3.select(this);
             if (d.type === "single") {
-                linksEnter.append("line");
+                thisSelection.append("line");
             } else if (d.type === "double") {
-                linksEnter.append("line").style("stroke-width", 5);
-                linksEnter.append("line").style("stroke-width", 3).style("stroke", "white");      
+                thisSelection.append("line").style("stroke-width", 5);
+                thisSelection.append("line").style("stroke-width", 3).style("stroke", "white");      
             } else if (d.type === "triple") {                
-                linksEnter.append("line").style("stroke-width", 10);
-                linksEnter.append("line").style("stroke-width", 8).style("stroke", "white");                      
-                linksEnter.append("line").style("stroke-width", 1);      
+                thisSelection.append("line").style("stroke-width", 10);
+                thisSelection.append("line").style("stroke-width", 8).style("stroke", "white");                      
+                thisSelection.append("line").style("stroke-width", 1);      
             } else if (d.type === "quadruple") {
-                linksEnter.append("line").style("stroke-width", 15);
-                linksEnter.append("line").style("stroke-width", 13).style("stroke", "white");
-                linksEnter.append("line").style("stroke-width", 6);
-                linksEnter.append("line").style("stroke-width", 4).style("stroke", "white");
+                thisSelection.append("line").style("stroke-width", 15);
+                thisSelection.append("line").style("stroke-width", 13).style("stroke", "white");
+                thisSelection.append("line").style("stroke-width", 6);
+                thisSelection.append("line").style("stroke-width", 4).style("stroke", "white");
             }             
         });
         
@@ -259,6 +258,124 @@
             }
         }
     }
+    
+    function importSmiles() {
+        nodesSelection.remove();
+        linksSelection.remove();
+        nodesSelection = svg.selectAll(".node"),
+        linksSelection = svg.selectAll(".link");
+        //var struct = smilesToStructure("OCC(=CCC)C(C(B)O)CCC");
+        var struct = smilesToStructure("C(C)(C)(C)(C)C[CH2]");
+        nodes = struct[0]; links = struct[1];
 
+        force.nodes(nodes);
+        force.links(links);
+        force.start();
+        something();
+        draw();  
+    }     
+    importSmiles();
+    console.log(nodes);
 
+    function isOrganic(atom) {
+        return atom == "B" ||
+               atom == "C" ||
+               atom == "N" ||
+               atom == "O" ||
+               atom == "P" ||
+               atom == "S" ||
+               atom == "F" ||
+               atom == "Cl"||
+               atom == "Br"||
+               atom == "I";
+    }
+
+    function valenceLookup(atom, weight) {
+        switch (atom) {
+            case "B":
+                return 3;
+            case "C":
+                return 4;
+            case "N":
+                if (weight > 3)
+                    return 5;
+                else
+                    return 3;
+            case "O":
+                return 2;
+            case "P":
+                if (weight > 2) {
+                    if (weight > 4)
+                        return 6;
+                    else
+                        return 4;
+                } else
+                    return 2;
+            case "S":
+                if (weight > 3)
+                    return 5;
+                else
+                    return 3;
+            case "F":
+                return 1;
+            case "Cl":
+                return 1;
+            case "Br":
+                return 1;
+            case "I":
+                return 1;
+        }
+
+    }
+
+    function calcImplicitHydrogens(valence, weight) {
+        if (weight >= valence)
+            return 0;
+        return valence - weight;
+    }
+
+    function bondToOrder(bond) {
+        switch (bond) {
+            case "single":
+                return 1;
+            case "double":
+                return 2;
+            case "triple":
+                return 3;
+            case "quadruple":
+                return 4;
+        }
+    }
+
+    function calcWeight(node) {
+        var weight = 0;
+        links.forEach(function (link, index) {
+            if (link.source === node ||
+                link.target === node)
+                weight += bondToOrder(link.type);
+        });
+        return weight;
+    }
+
+    function something() {
+        for (var i = 0; i < nodes.length; i++) {
+            if (isOrganic(nodes[i].id)) {
+                if (nodes[i].hydrogens !== null) {
+                    
+                } else if (nodes[i].charge !== null) {
+
+                } else {
+                    var weight = calcWeight(nodes[i]);
+                    var valence = valenceLookup(nodes[i].id, weight);
+                    var implicitHydrogens = calcImplicitHydrogens(valence, weight);
+                    nodes[i].hydrogens = implicitHydrogens;
+
+                    weight = weight + implicitHydrogens;
+                    valence = valenceLookup(nodes[i].id, weight); // not sure if needed
+                    //console.log("weight: " +weight+"\nvalence: "+valence);
+                    nodes[i].charge = weight - valence;
+                }
+            }
+        }
+    }
 })();

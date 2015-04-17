@@ -14,7 +14,12 @@ line:hover {
 .drag_line:hover {
   stroke-width: 1px;
 }
-
+/*
+circle {
+  stroke:transparent;
+  fill:transparent;
+}
+*/
 circle {
   stroke: black;
   fill: white;
@@ -30,6 +35,7 @@ circle {
 
 
 svg text {
+  //visibility:hidden;
   font-family: Verdana;
   font-size: 14px;
 
