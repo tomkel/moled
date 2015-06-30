@@ -23,7 +23,46 @@ function orderToString(order) {
 
 var linkIndex = 0;
 
+// this method inserts H0 and -0 into bracketed atoms that don't have hydrogens or charge specified
+function completeBracketedAtoms(input) {
+    var i = 0;
+    while (i++ < input.length) {
+        if (input[i] === "[") {
+            i++;
+            if (/[A-Z]/.test(input[i])) {
+                i++; 
+                if (/[a-z]/.test(input[i])) i++;                
+                if (input[i] === "@") {
+                    //step past chiral class    
+                    i++;
+                    if (input[i] === "@") {
+                        i++;
+                    } else if (/[TASO]/.test(input[i])) {
+                        i += 3;
+                        if (/\d/.test(input[i]))
+                            i++;
+                    }
+                }
+
+                if (input[i] !== "H") {                    
+                    input = [input.slice(0, i), "H0", input.slice(i)].join('');                    
+                }
+                i = i + 2;
+
+                if (!/[-+]/.test(input[i])) {
+                    input = [input.slice(0, i), "-0", input.slice(i)].join('');                       
+                }
+                i = i + 2;
+            }
+        }
+    }
+
+    return input;
+}
+
 function smilesToStructure(input) {
+
+    input = completeBracketedAtoms(input);
 
     var tokens = getTokens(input);
     var nodes = [],
@@ -138,7 +177,7 @@ function smilesToStructure(input) {
                 case "bond":                    
                     var link = {source: lastAtom,
                                 target: tokenArr[i+1].node,
-                                type: orderToString(token.order),
+                                type: orderToString(tokenArr[i].order),
                                 index: linkIndex++};
                     links.push(link);
                     break;
