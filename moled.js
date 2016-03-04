@@ -1,3 +1,4 @@
+'use strict';
 //charge = valence - electrons - weight
 //weight = numBonds
 
@@ -95,7 +96,7 @@
 		O:6, S:6, Se:6, Te:6, Po:6,
 		F:7, Cl:7, Br:7, I:7, At:7,
 		He:8, Ne:8, Ar:8, Kr:8, Xe:8, Rn: 8
-	}
+	};
 
 	var tds = document.getElementsByTagName('td');
     for (var i = 0; i < tds.length; i++) {
@@ -111,24 +112,24 @@
 
     document.getElementById('periodic-button').onclick = function(event) {  
       document.getElementById('periodic-table').style.visibility = 'visible';
-    }
+    };
 
     document.getElementById('periodic-close').onclick = function(event) {  
       document.getElementById('periodic-table').style.visibility = '';
-    }   
+    };   
 
     document.getElementById('b1').onchange = function(event) {  
-	  bondType = "single";
-	}
+	    bondType = "single";
+	  };
 
-	document.getElementById('b2').onchange = function(event) {  
-	  bondType = "double";
-	}
+    document.getElementById('b2').onchange = function(event) {  
+      bondType = "double";
+    };
 
-	document.getElementById('b3').onchange = function(event) {  
-	  bondType = "triple";
-	}
-    
+    document.getElementById('b3').onchange = function(event) {  
+      bondType = "triple";
+    };
+
     function importSmiles() {
         nodesSelection.remove();
         linksSelection.remove();
@@ -421,7 +422,7 @@
             }
         }
         force.start(); //initialize node.index for key function
-        draw()   
+        draw();
     }
 
     function updateCharge(node) {
