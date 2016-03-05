@@ -2,6 +2,7 @@
 //charge = valence - electrons - weight
 //weight = numBonds
 
+var d3 = require('d3');
 
 (function () {
     var width = 800,

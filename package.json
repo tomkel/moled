@@ -1,0 +1,25 @@
+{
+  "name": "moled",
+  "version": "3.0.0",
+  "description": "Molecule editor in javascript",
+  "main": "moled.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomkel/moled.git"
+  },
+  "keywords": [
+    "molecule"
+  ],
+  "author": "Tommy Kelly",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/tomkel/moled/issues"
+  },
+  "homepage": "https://github.com/tomkel/moled#readme",
+  "dependencies": {
+    "d3": "^3.5.16"
+  }
+}
