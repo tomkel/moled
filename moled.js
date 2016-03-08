@@ -18,8 +18,8 @@ var d3 = require('d3')
     .size([width, height])
     .nodes(nodes)
     .links(links)
-    .linkDistance(function (d) {return d.isElectron ? 1 : 20;})
-    .charge(function (d) {return d.isElectron ? -100 : -400;})
+    .linkDistance(function (d) { return d.isElectron ? 1 : 20 })
+    .charge(function (d) { return d.isElectron ? -100 : -400 })
     // .friction(0.1)
     .on('tick', tick)
     .start()
@@ -40,8 +40,9 @@ var d3 = require('d3')
       initHydrogens()
     } else {
       collapseHydrogens()
-      if (!show_c.checked)
+      if (!show_c.checked) {
         hideCarbons()
+      }
     }
   }
 
@@ -67,7 +68,7 @@ var d3 = require('d3')
   var group = {
     H: 1, Li: 1, Na: 1, K: 1, Rb: 1, Cs: 1, Fr: 1,
     Be: 2, Mg: 2, Ca: 2, Sr: 2, Ba: 2, Ra: 2,
-    /*La:3, Ac:3, 
+    /* La:3, Ac:3,
     Ce:4, Th:4,
     Pr:4, Pa:5,
     Nd:4, U:6,
@@ -101,8 +102,9 @@ var d3 = require('d3')
 
   var tds = document.getElementsByTagName('td')
   for (var i = 0; i < tds.length; i++) {
-    if (tds[i].childElementCount) // will be equal to 1 if has sup tag
+    if (tds[i].childElementCount) { // will be equal to 1 if has sup tag
       tds[i].onclick = periodicTableClick
+    }
   }
 
   function periodicTableClick (event) {
@@ -134,7 +136,7 @@ var d3 = require('d3')
   function importSmiles () {
     nodesSelection.remove()
     linksSelection.remove()
-    nodesSelection = svg.selectAll('.node'),
+    nodesSelection = svg.selectAll('.node')
     linksSelection = svg.selectAll('.link')
     // var struct = smilesToStructure("O1CC(=CCC)C(C(B)O)CCC1[CH2]=O")
     // var struct = smilesToStructure("C(C)(C)(C)(C)C[CH2]")
@@ -169,22 +171,22 @@ var d3 = require('d3')
   function tick () {
     // links
     linksSelection.selectAll('line')
-      .attr('x1', function (d) { return d.source.x; })
-      .attr('y1', function (d) { return d.source.y; })
-      .attr('x2', function (d) { return d.target.x; })
-      .attr('y2', function (d) { return d.target.y; })
+      .attr('x1', function (d) { return d.source.x })
+      .attr('y1', function (d) { return d.source.y })
+      .attr('x2', function (d) { return d.target.x })
+      .attr('y2', function (d) { return d.target.y })
 
     // nodes
-    nodesSelection.selectAll('circle').attr('cx', function (d) { return d.x; })
-      .attr('cy', function (d) { return d.y; })
-    nodesSelection.selectAll('text').attr('x', function (d) { return d.x; })
-      .attr('y', function (d) { return d.y; })
+    nodesSelection.selectAll('circle').attr('cx', function (d) { return d.x })
+      .attr('cy', function (d) { return d.y })
+    nodesSelection.selectAll('text').attr('x', function (d) { return d.x })
+      .attr('y', function (d) { return d.y })
   }
 
   function draw () {
-    linksSelection = linksSelection.data(links, function (d) {return d.index;})
+    linksSelection = linksSelection.data(links, function (d) { return d.index })
     var linksEnter = linksSelection.enter()
-      .insert('g', '.node') // insert so that nodes stay on top                        
+      .insert('g', '.node') // insert so that nodes stay on top
       .attr('class', 'link')
 
     linksEnter.each(function (d) {
@@ -206,11 +208,10 @@ var d3 = require('d3')
       }
     })
 
-
     var linksExit = linksSelection.exit()
     linksExit.remove()
 
-    nodesSelection = nodesSelection.data(nodes, function (d) {return d.index;})
+    nodesSelection = nodesSelection.data(nodes, function (d) { return d.index })
     var nodesEnter = nodesSelection.enter()
       .append('g')
       .attr('class', 'node')
@@ -226,7 +227,7 @@ var d3 = require('d3')
           .attr('r', 8)
           .on('mousedown', mousedown)
         thisSelection.append('text')
-          .text(function (d) {return d.id || 'X';})
+          .text(function (d) { return d.id || 'X' })
           .attr('pointer-events', 'none')
           .attr('dx', '-0em')
           .attr('text-anchor', 'middle')
@@ -239,7 +240,7 @@ var d3 = require('d3')
           .attr('pointer-events', 'none')
           .attr('dx', '1.5em')
         // .attr("text-anchor", "top")
-        // .attr("dy", ".35em");  
+        // .attr("dy", ".35em")
         d.chargeNode = charge.node()
       }
     })
@@ -253,13 +254,15 @@ var d3 = require('d3')
   function stringFromCharge (charge) {
     var str = ''
     if (charge) {
-      if (charge < 0)
+      if (charge < 0) {
         str += '-'
-      else
+      } else {
         str += '+'
+      }
 
-      if (Math.abs(charge) > 1)
+      if (Math.abs(charge) > 1) {
         str += '' + charge
+      }
     }
     return str
   }
@@ -270,13 +273,12 @@ var d3 = require('d3')
       var charge = nodes[i].charge
       // if (charge > 0) {
 
-
       var weight = calcWeight(nodes[i])
       weight = weight + nodes[i].hydrogens
       var valence = valenceLookup(nodes[i].id, weight)
       var numElectrons = 8 - valence - weight - charge
 
-      // var g = group[nodes[i].id];     
+      // var g = group[nodes[i].id]
 
       while (numElectrons-- > 0) {
         var electron = {isElectron: true}
@@ -285,18 +287,20 @@ var d3 = require('d3')
       }
     // }
     }
-    force.start(); // initialize node.index for key function
+    force.start() // initialize node.index for key function
     draw()
   }
 
   function initHydrogens () {
     for (var i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].isHydrogen)
+      if (nodes[i].isHydrogen) {
         nodes.splice(i, 1)
+      }
     }
     for (var i = links.length - 1; i >= 0; i--) {
-      if (links[i].isHydrogen)
+      if (links[i].isHydrogen) {
         links.splice(i, 1)
+      }
     }
     draw()
     var nodesLength = nodes.length
@@ -308,7 +312,7 @@ var d3 = require('d3')
         links.push({source: hydrogen, target: nodes[i], type: 'single', isHydrogen: true, index: linkIndex++})
       }
     }
-    force.start(); // initialize node.index for key function
+    force.start() // initialize node.index for key function
     draw()
   }
 
@@ -316,7 +320,7 @@ var d3 = require('d3')
     var toSplice = []
     for (var i = nodes.length - 1; i >= 0; i--) {
       // only for carbon atoms
-      if (nodes[i].id == 'C') {
+      if (nodes[i].id === 'C') {
         // go through all links
         for (var j = links.length - 1; j >= 0; j--) {
           // hydrogen links
@@ -330,7 +334,7 @@ var d3 = require('d3')
               links.splice(j, 1)
             }
             if (target === nodes[i]) {
-              // remove the link                      
+              // remove the link
               toSplice.push(nodes.indexOf(source))
               links.splice(j, 1)
             }
@@ -368,7 +372,7 @@ var d3 = require('d3')
           break
         }
         if (target === node) {
-          // remove the link                      
+          // remove the link
           nodes.splice(nodes.indexOf(source), 1)
           links.splice(j, 1)
           break
@@ -391,7 +395,7 @@ var d3 = require('d3')
           links.splice(j, 1)
         }
         if (target === node) {
-          // remove the link                      
+          // remove the link
           toSplice.push(nodes.indexOf(source))
           links.splice(j, 1)
         }
@@ -416,16 +420,16 @@ var d3 = require('d3')
         links.push({source: hydrogen, target: node, type: 'single', isHydrogen: true, index: linkIndex++})
       }
     }
-    force.start(); // initialize node.index for key function
+    force.start() // initialize node.index for key function
     draw()
   }
 
   function updateCharge (node) {
-    /*var weight = calcWeight(node)
+    /* var weight = calcWeight(node)
     if (!show_h.checked)
         weight += node.hydrogens; //PROBLEM: calcWeight doesn't count hidden H
     var valence = valenceLookup(node.id, weight)
-    node.charge = weight - valence;  
+    node.charge = weight - valence
     console.log(node.charge);*/
     node.chargeNode.textContent = stringFromCharge(node.charge)
   }
@@ -444,7 +448,7 @@ var d3 = require('d3')
             }
           }
           if (!hasH) {
-            var nodeToHide = nodesSelection.filter(function (d) {return nodes[i] === d;})
+            var nodeToHide = nodesSelection.filter(function (d) { return nodes[i] === d })
             nodeToHide.classed('hidden-carbon', true)
           }
         }
@@ -481,14 +485,18 @@ var d3 = require('d3')
     var eventTarget = d3.select(event.target)
     if (drag_line) {
       // if the cursor is inside the node
-      if (event.target.nodeName == 'circle' && !eventTarget.datum().isElectron) {
+      if (event.target.nodeName === 'circle' && !eventTarget.datum().isElectron) {
         // this block handles connecting bonds to existing nodes
 
         // if the cursor is in a circle, but not the same circle
         if (drag_line.mousedown_node.datum() !== eventTarget.datum()) {
           // add new link
-          var dragLink = {source: drag_line.mousedown_node.datum(), target: eventTarget.datum(),
-          type: bondType, index: linkIndex++}
+          var dragLink = {
+            source: drag_line.mousedown_node.datum(),
+            target: eventTarget.datum(),
+            type: bondType,
+            index: linkIndex++
+          }
           links.push(dragLink)
 
           // execute enter()
@@ -521,15 +529,18 @@ var d3 = require('d3')
         // remove drag_line
         drag_line.remove()
         drag_line = null
-      }
-      // if the cursor is outside the node
-      else {
+      } else {
+        // if the cursor is outside the node
         // add new node and link
         var mouse = d3.mouse(this)
         var dragNode = {x: mouse[0], y: mouse[1], id: currAtom, charge: 0, hydrogens: 0}
         nodes.push(dragNode)
-        var dragLink = {source: drag_line.mousedown_node.datum(), target: dragNode,
-        type: bondType, index: linkIndex++}
+        var dragLink = {
+          source: drag_line.mousedown_node.datum(),
+          target: dragNode,
+          type: bondType,
+          index: linkIndex++
+        }
         links.push(dragLink)
 
         if (isOrganic(dragNode.id)) {
@@ -546,17 +557,16 @@ var d3 = require('d3')
         //                 console.log(dragNode.charge)
         //                 console.log(dragNode.hydrogens)
 
-
         if (isOrganic(dragNode.id)) {
           // TODO: create a function for this, the same code is in initCalcHydrogensAndCharge
-          /*var weight = calcWeight(dragNode)
+          /* var weight = calcWeight(dragNode)
           var valence = valenceLookup(dragNode.id, weight)
           var implicitHydrogens = calcImplicitHydrogens(valence, weight)
           dragNode.hydrogens = implicitHydrogens
 
           weight = weight + implicitHydrogens
-          valence = valenceLookup(dragNode.id, weight) // not sure if needed                
-          dragNode.charge = weight - valence;         
+          valence = valenceLookup(dragNode.id, weight) // not sure if needed
+          dragNode.charge = weight - valence
           */
 
           // from initHydrogens
@@ -591,17 +601,14 @@ var d3 = require('d3')
           mdndatum.charge += 1
           updateCharge(mdndatum)
         }
-        // }       
-
-
-
+        // }
 
         var weight = calcWeight(dragNode)
         weight = weight + dragNode.hydrogens
         var valence = valenceLookup(dragNode.id, weight)
         var numElectrons = 8 - valence - weight - dragNode.charge
 
-        // var g = group[nodes[i].id];     
+        // var g = group[nodes[i].id]
 
         while (numElectrons > 0) {
           numElectrons--
@@ -610,13 +617,13 @@ var d3 = require('d3')
           links.push({source: electron, target: dragNode, isElectron: true, index: linkIndex++})
         }
 
-        force.start(); // initialize node.index for key function
+        force.start() // initialize node.index for key function
         draw()
       }
-    } else if (event.target.nodeName == 'line') { // drag_line won't exist when selecting bonds
+    } else if (event.target.nodeName === 'line') { // drag_line won't exist when selecting bonds
       // this block handles selections
       eventTarget = d3.select(event.target.parentNode)
-      // remove selection from node                
+      // remove selection from node
       if (selectedNode) {
         selectedNode.classed('selected', false)
       }
@@ -646,48 +653,49 @@ var d3 = require('d3')
       case 8: // backspace
       case 46:
         { // delete
-        if (selectedNode &&
-          selectedNode.classed('selected')) { // is a node
-          // remove links to selectedNode
-          for (var i = links.length - 1; i >= 0; i--) {
-            if (links[i].source === selectedNode.datum() ||
-              links[i].target === selectedNode.datum())
-              links.splice(i, 1)
+          if (selectedNode &&
+              selectedNode.classed('selected')) { // is a node
+            // remove links to selectedNode
+            for (var i = links.length - 1; i >= 0; i--) {
+              if (links[i].source === selectedNode.datum() ||
+                  links[i].target === selectedNode.datum()) {
+                links.splice(i, 1)
+              }
+            }
+
+            // remove selectedNode
+            nodes.splice(nodes.indexOf(selectedNode.datum()), 1)
+
+              // remove selection
+            selectedNode.classed('selected', false)
+          } else if (selectedLink && selectedLink.classed('selected')) { // is a link
+            links.splice(links.indexOf(selectedLink.datum()), 1)
+            selectedLink.classed('selected', false)
           }
 
-          // remove selectedNode                        
-          nodes.splice(nodes.indexOf(selectedNode.datum()), 1)
-
-          // remove selection
-          selectedNode.classed('selected', false)
-        }
-        else if (selectedLink && selectedLink.classed('selected')) { // is a link
-          links.splice(links.indexOf(selectedLink.datum()), 1)
-          selectedLink.classed('selected', false)
-        }
-
-        for (var i = 0; i < nodes.length; i++) {
-          if (nodes[i].id)
-            updateCharge(nodes[i])
-        }
-        draw()
-        break
+          for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].id) {
+              updateCharge(nodes[i])
+            }
+          }
+          draw()
+          break
         }
     }
   }
 
   function isOrganic (atom) {
-    return atom == 'B' ||
-    atom == 'C' ||
-    atom == 'N' ||
-    atom == 'O' ||
-    atom == 'P' ||
-    atom == 'S' ||
-    atom == 'F' ||
-    atom == 'Cl' ||
-    atom == 'Br' ||
-    atom == 'I'
-    return Boolean(valenceLookup(atom, 0))
+    return atom === 'B' ||
+      atom === 'C' ||
+      atom === 'N' ||
+      atom === 'O' ||
+      atom === 'P' ||
+      atom === 'S' ||
+      atom === 'F' ||
+      atom === 'Cl' ||
+      atom === 'Br' ||
+      atom === 'I'
+    // return Boolean(valenceLookup(atom, 0))
   }
 
   function valenceLookup (atom, weight) {
@@ -697,25 +705,29 @@ var d3 = require('d3')
       case 'C':
         return 4
       case 'N':
-        if (weight > 3)
+        if (weight > 3) {
           return 5
-        else
+        } else {
           return 3
+        }
       case 'O':
         return 2
       case 'P':
         if (weight > 2) {
-          if (weight > 4)
+          if (weight > 4) {
             return 6
-          else
+          } else {
             return 4
-        } else
+          }
+        } else {
           return 2
+        }
       case 'S':
-        if (weight > 3)
+        if (weight > 3) {
           return 5
-        else
+        } else {
           return 3
+        }
       case 'F':
         return 1
       case 'Cl':
@@ -728,8 +740,9 @@ var d3 = require('d3')
   }
 
   function calcImplicitHydrogens (valence, weight) {
-    if (weight >= valence)
+    if (weight >= valence) {
       return 0
+    }
     return valence - weight
   }
 
@@ -751,8 +764,9 @@ var d3 = require('d3')
     links.forEach(function (link, index) {
       if ((link.source === node ||
         link.target === node) &&
-        !link.isElectron)
+        !link.isElectron) {
         weight += bondToOrder(link.type)
+      }
     })
     return weight
   }
@@ -762,11 +776,11 @@ var d3 = require('d3')
       if (isOrganic(nodes[i].id)) {
         if (nodes[i].hydrogens !== null && nodes[i].charge !== null) {
         } else if (nodes[i].hydrogens !== null) {
-          /*var weight = calcWeight(nodes[i]) + nodes[i].hydrogens
+          /* var weight = calcWeight(nodes[i]) + nodes[i].hydrogens
           var valence = valenceLookup(nodes[i].id, weight)
           nodes[i].charge = weight - valence;*/
         } else if (nodes[i].charge !== null) {
-          /*var weight = calcWeight(nodes[i]);   
+          /* var weight = calcWeight(nodes[i])
           var valence = valenceLookup(nodes[i].id, weight)
           nodes[i].hydrogens = valence - weight + nodes[i].charge;*/
         } else {
