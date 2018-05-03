@@ -3,7 +3,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const DashboardPlugin = require('webpack-dashboard/plugin')
 
 module.exports = (env = {}) => {
-  const plugins = [new HtmlWebpackPlugin({ title: 'moled' })]
+  const plugins = [new HtmlWebpackPlugin({
+    title: 'moled',
+    template: './src/index.ejs',
+  })]
   const entry = ['./src/main']
 
   if (env.production) {

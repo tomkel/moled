@@ -22,16 +22,19 @@
   },
   "homepage": "https://github.com/tomkel/moled#readme",
   "dependencies": {
-    "d3": "^4.9.1"
+    "d3": "^4.9.1",
+    "pegjs": "^0.10.0",
+    "smiles": "^0.0.2"
   },
   "devDependencies": {
-    "babel-core": "^6.24.1",
-    "babel-loader": "^7.0.0",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.0",
     "babel-polyfill": "^6.23.0",
-    "babel-preset-env": "^1.5.1",
+    "babel-preset-env": "^1.5.2",
     "html-webpack-plugin": "^2.28.0",
-    "webpack": "^2.6.1",
+    "uglifyjs-webpack-plugin": "^0.4.6",
+    "webpack": "^3.0.0",
     "webpack-dashboard": "^0.4.0",
-    "webpack-dev-server": "^2.4.5"
+    "webpack-dev-server": "^2.5.0"
   }
 }
